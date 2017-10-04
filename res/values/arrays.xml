@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="fruit_images">
+        <item>@drawable/apple</item>
+        <item>@drawable/apple1</item>
+        <item>@drawable/banana</item>
+        <item>@drawable/cabbage</item>
+        <item>@drawable/cherry</item>
+        <item>@drawable/eggplant</item>
+        <item>@drawable/goosebeery</item>
+        <item>@drawable/hamimelon</item>
+        <item>@drawable/lemon</item>
+        <item>@drawable/mango</item>
+        <item>@drawable/onion</item>
+        <item>@drawable/orange</item>
+        <item>@drawable/pear</item>
+        <item>@drawable/pepper</item>
+        <item>@drawable/pimiento</item>
+        <item>@drawable/pumpkin</item>
+        <item>@drawable/pumpkin1</item>
+        <item>@drawable/strawberry</item>
+        <item>@drawable/tomato</item>
+        <item>@drawable/watermelon</item>
+    </string-array>
+    <string-array name="fruit_names">
+        <item>苹果</item>
+        <item>苹果</item>
+        <item>香蕉</item>
+        <item>卷心菜</item>
+        <item>樱桃</item>
+        <item>茄子</item>
+        <item>猕猴桃</item>
+        <item>哈密瓜</item>
+        <item>柠檬</item>
+        <item>芒果</item>
+        <item>洋葱</item>
+        <item>橙子</item>
+        <item>梨</item>
+        <item>辣椒</item>
+        <item>青椒</item>
+        <item>南瓜</item>
+        <item>南瓜</item>
+        <item>草莓</item>
+        <item>西红柿</item>
+        <item>西瓜</item>
+    </string-array>
+
+</resources>
