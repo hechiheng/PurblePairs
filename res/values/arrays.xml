@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="fruit_images">
+    <string-array name="item_images">
         <item>@drawable/apple</item>
         <item>@drawable/apple1</item>
         <item>@drawable/banana</item>
@@ -23,7 +23,7 @@
         <item>@drawable/tomato</item>
         <item>@drawable/watermelon</item>
     </string-array>
-    <string-array name="fruit_names">
+    <string-array name="item_names">
         <item>苹果</item>
         <item>苹果</item>
         <item>香蕉</item>

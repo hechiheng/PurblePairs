@@ -5,12 +5,16 @@ import java.util.Random;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -22,15 +26,15 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 /**
- * 果蔬翻牌
+ * 果蔬翻牌游戏
  * 
  * @author hch
  * 
  */
 public class MainActivity extends Activity {
 
-	private int[] fruit_images = new int[20];// 图片id
-	private String[] fruit_names = new String[20];// 图片名称
+	private int[] item_images = new int[20];// 图片id
+	private String[] item_names = new String[20];// 图片名称
 	private int[] card_images;// 卡片的图片索引
 	private Card[][] cards = new Card[4][5];// 卡片
 	private int lastcard_x = -1;// 上一个卡片x索引
@@ -46,6 +50,12 @@ public class MainActivity extends Activity {
 	private boolean isFirstClick = false;
 	private int second = 0;
 	private int quantity = 20;
+	private SoundPool soundPool;
+	private int clickSoundID;// 点击音效ID
+	private int removeSoundID;// 消失音效ID
+	private int winSoundID;// 胜利音效ID
+	private float volumnCurrent;
+	private float volumnRatio;
 
 	/**
 	 * 定时器，定时更新时间
@@ -76,6 +86,7 @@ public class MainActivity extends Activity {
 				cards[lastcard_x][lastcard_y].setRemove(true);
 				quantity = quantity - 2;
 				quantityTxt.setText(String.format("%03d", quantity));
+				playSound(removeSoundID);
 			} else {
 				buttons[currentcard_x][currentcard_y]
 						.setImageResource(R.drawable.leaf);
@@ -126,14 +137,21 @@ public class MainActivity extends Activity {
 		});
 
 		Resources res = getResources();
-		fruit_names = res.getStringArray(R.array.fruit_names);
-		TypedArray array = res.obtainTypedArray(R.array.fruit_images);
+		item_names = res.getStringArray(R.array.item_names);
+		TypedArray array = res.obtainTypedArray(R.array.item_images);
 		for (int i = 0; i < array.length(); i++) {
-			fruit_images[i] = array.getResourceId(i, 0);
+			item_images[i] = array.getResourceId(i, 0);
 		}
 		array.recycle();
 
 		initCardPanel();
+
+		AudioManager am = (AudioManager) this
+				.getSystemService(Context.AUDIO_SERVICE);
+		float audioMaxVolumn = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+		volumnCurrent = am.getStreamVolume(AudioManager.STREAM_MUSIC);
+		volumnRatio = volumnCurrent / audioMaxVolumn;
+		initSound();
 	}
 
 	/**
@@ -198,11 +216,12 @@ public class MainActivity extends Activity {
 				}
 			}
 			if (isClick) {
+				playSound(clickSoundID);
 				ImageButton button = (ImageButton) v;
 				Card card = (Card) button.getTag();
 				int x = card.getX(), y = card.getY();
 				if (!card.isShow()) {
-					button.setImageResource(fruit_images[card.getImage_index()]);
+					button.setImageResource(item_images[card.getImage_index()]);
 					card.setShow(true);
 					currentcard_x = x;
 					currentcard_y = y;
@@ -230,6 +249,7 @@ public class MainActivity extends Activity {
 
 		if (rightNum == 20) {
 			handler.removeCallbacks(runnable);
+			playSound(winSoundID);
 			showMessage("游戏胜利", "恭喜你赢了！一共用时 " + second + "秒");
 		}
 	}
@@ -324,5 +344,60 @@ public class MainActivity extends Activity {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * 初始化点击音效
+	 */
+	private void initSound() {
+		soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 5);
+		clickSoundID = soundPool.load(this, R.raw.click, 1);
+		removeSoundID = soundPool.load(this, R.raw.remove, 1);
+		winSoundID = soundPool.load(this, R.raw.win, 2);
+	}
+
+	/**
+	 * 播放点击音效
+	 */
+	private void playSound(int soundID) {
+		soundPool.play(soundID, volumnRatio, // 左耳道音量【0~1】
+				volumnRatio, // 右耳道音量【0~1】
+				0, // 播放优先级【0表示最低优先级】
+				1, // 循环模式【0表示循环一次，-1表示一直循环，其他表示数字+1表示当前数字对应的循环次数】
+				1 // 播放速度【1是正常，范围从0~2】
+				);
+	}
+
+	/**
+	 * 返回按键
+	 */
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			AlertDialog.Builder builder = new Builder(MainActivity.this);
+			builder.setMessage("是否退出游戏？");
+			builder.setTitle("提示");
+			builder.setPositiveButton("重新开始",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							handler.removeCallbacks(runnable);
+							resetTime();
+							tableLayout.removeAllViews();
+							initCardPanel();
+						}
+					});
+			builder.setNegativeButton("退出",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							System.exit(0);
+						}
+					});
+			builder.create().show();
+		}
+		return true;
 	}
 }
