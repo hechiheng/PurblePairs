@@ -181,7 +181,7 @@ public class MainActivity extends Activity {
 				buttons[x][y] = new ImageButton(this);
 				buttons[x][y].setLayoutParams(layoutParams);
 				buttons[x][y].setOnClickListener(new CardClickListener());
-				buttons[x][y].setBackgroundResource(R.drawable.box1);
+				buttons[x][y].setBackgroundResource(R.drawable.box);
 				buttons[x][y].setImageResource(R.drawable.leaf);
 				buttons[x][y].setScaleType(ScaleType.FIT_CENTER);
 				buttons[x][y].setTag(cards[x][y]);
